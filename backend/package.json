@@ -1,9 +1,7 @@
 {
   "name": "nxn-backend",
   "version": "1.0.0",
-  "description": "NXN Game Backend (NestJS)",
   "private": true,
-  "license": "UNLICENSED",
 
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -16,6 +14,10 @@
     "@nestjs/core": "^10.3.0",
     "@nestjs/platform-express": "^10.3.0",
 
+    "@nestjs/typeorm": "^10.0.2",
+    "typeorm": "^0.3.19",
+    "sqlite3": "^5.1.7",
+
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/schedule": "^3.0.4",
@@ -24,13 +26,12 @@
     "passport-jwt": "^4.0.1",
 
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1",
-
-    "@types/node": "^18.19.0"
+    "rxjs": "^7.8.1"
   },
 
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@types/node": "^18.19.0"
   },
 
   "engines": {
