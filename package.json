@@ -1,0 +1,12 @@
+{
+  "name": "nxn-root",
+  "private": true,
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "install": "cd backend && npm install",
+    "build": "cd backend && npm run build",
+    "start": "cd backend && npm run start:prod"
+  }
+}
