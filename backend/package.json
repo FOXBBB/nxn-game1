@@ -5,8 +5,8 @@
   "engines": {
     "node": "18.x"
   },
-  "scripts": {
-  "build": "nest build",
+"scripts": {
+  "build": "npx nest build",
   "start": "node dist/main.js"
 },
   "dependencies": {
