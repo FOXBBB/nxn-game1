@@ -4,11 +4,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
-
-  // 🔴 ВАЖНО: ЕСЛИ ЭТА СТРОКА ЕСТЬ — ПРЕФИКС ЕСТЬ
   app.setGlobalPrefix('api');
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+
+  console.log(`🚀 Server started on port ${port}`);
 }
 bootstrap();

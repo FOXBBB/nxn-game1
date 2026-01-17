@@ -11,17 +11,20 @@ import { TapModule } from './tap/tap.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { AuthModule } from './auth/auth.module';
 import { ShopModule } from './shop/shop.module';
-
+import { HealthController } from './health/health.controller';
+import { HealthModule } from './health/health.module';
 
 @Module({
+  controllers: [HealthController],
   imports: [TapModule,
+    HealthModule,
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
       entities: [User, Payment, TapUpgrade],
       synchronize: true,
-
+      
     }),
     ShopModule,
     AuthModule,
