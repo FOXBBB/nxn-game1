@@ -14,7 +14,7 @@ import { ShopModule } from './shop/shop.module';
 
 
 @Module({
-  imports: [
+  imports: [TapModule,
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
