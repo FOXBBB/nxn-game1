@@ -3,17 +3,17 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class Payment {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @Column({ unique: true })
-  txHash: string;
+  txHash!: string;
 
   @Column({ default: 0 })
-  amount: number;
+  amount!: number;
 
   @Column({ default: 'confirmed' })
-  status: string;
+  status!: string;
 }

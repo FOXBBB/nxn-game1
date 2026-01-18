@@ -4,14 +4,15 @@ import { User } from '../users/user.entity';
 @Entity()
 export class TapUpgrade {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  user: User;
+  user!: User;
 
   @Column()
-  value: number;
+  value!: number;
 
   @Column({ type: 'bigint' })
-  expiresAt: number;
+  expiresAt!: number | null;
+
 }

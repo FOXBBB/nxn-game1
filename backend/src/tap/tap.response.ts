@@ -7,9 +7,9 @@ export type TapResult = {
 };
 
 export class TapResponseDto {
-  id: number;
-  login: string;
-  nickname: string;
-  balanceNxn: number;
-  energy: number;
+  id!: number;
+  login!: string;
+  nickname!: string;
+  balanceNxn!: number;
+  energy!: number;
 }
