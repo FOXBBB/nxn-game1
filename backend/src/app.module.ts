@@ -21,11 +21,11 @@ import { HealthModule } from './health/health.module';
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [User, Payment, TapUpgrade],
+      database: process.env.DATABASE_PATH || '/opt/render/project/data/db.sqlite',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      
-    }),
+    })
+    ,
     ShopModule,
     AuthModule,
     UsersModule,
