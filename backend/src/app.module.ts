@@ -16,16 +16,18 @@ import { HealthModule } from './health/health.module';
 
 @Module({
   controllers: [HealthController],
-  imports: [TapModule,
+  imports: [
     HealthModule,
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: process.env.DATABASE_PATH || '/opt/render/project/data/db.sqlite',
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-    })
-    ,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    }),
     ShopModule,
     AuthModule,
     UsersModule,
@@ -34,5 +36,6 @@ import { HealthModule } from './health/health.module';
     StateModule,
     LeaderboardModule,
   ],
+
 })
 export class AppModule { }
