@@ -12,10 +12,5 @@ export class UsersController {
     return this.usersService.getOrCreateByTelegram(body.telegramId);
   }
 
-  @Post("avatar")
-  async setAvatar(
-    @Body() body: { telegramId: number; avatar: string | null },
-  ) {
-    return this.usersService.setAvatar(body.telegramId, body.avatar);
-  }
+ 
 }

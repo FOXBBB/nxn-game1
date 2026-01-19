@@ -14,7 +14,7 @@ export class LeaderboardService {
    return this.usersRepo.find({
   order: { balance: "DESC" },
   take: 10,
-  select: ["telegramId", "balance", "avatar"],
+  select: ["telegramId", "balance", ],
 });
   }
 }
