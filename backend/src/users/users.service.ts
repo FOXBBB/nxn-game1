@@ -59,13 +59,6 @@ export class UsersService {
 
   // ========= АВАТАР =========
 
-  async setAvatar(telegramId: number, avatar: string | null) {
-    const user = await this.repo.findOneBy({ telegramId });
-    if (!user) return null;
-
-    user.avatar = avatar ?? null;
-    return this.repo.save(user);
-  }
 
   // ========= ЛИДЕРБОРД =========
 
@@ -73,7 +66,7 @@ export class UsersService {
     return this.repo.find({
       order: { balance: "DESC" },
       take: 10,
-      select: ["telegramId", "balance", "avatar"],
+      select: ["telegramId", "balance"],
     });
   }
 }

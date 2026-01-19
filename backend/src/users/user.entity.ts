@@ -59,7 +59,4 @@ export class User {
   @Column({ default: 0 })
   offlineIncome!: number;
 
-  @Column({ nullable: true })
-  avatar!: string | null;
-
 }
