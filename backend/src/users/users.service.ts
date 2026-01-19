@@ -63,7 +63,7 @@ export class UsersService {
     const user = await this.repo.findOneBy({ telegramId });
     if (!user) return null;
 
-    user.avatar = avatar;
+    user.avatar = avatar ?? null;
     return this.repo.save(user);
   }
 
