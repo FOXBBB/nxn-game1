@@ -31,7 +31,6 @@ import { HealthModule } from './health/health.module';
     }),
     ShopModule,
     AuthModule,
-    UsersModule,
     PaymentsModule,
     TapModule,
     StateModule,
