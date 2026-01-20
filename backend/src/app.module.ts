@@ -17,6 +17,7 @@ import { HealthModule } from './health/health.module';
 @Module({
   controllers: [HealthController],
   imports: [
+    UsersModule,
     HealthModule,
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
