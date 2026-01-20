@@ -30,9 +30,10 @@ export class UsersService {
 
   // ========= СОЗДАНИЕ =========
 
-  async getOrCreateByTelegram(telegramId: number): Promise<User> {
-    let user = await this.repo.findOneBy({ telegramId });
-
+ async getOrCreateByTelegram(telegramId: number) {
+  let user = await this.repo.findOne({
+    where: { telegramId },
+  });
     if (!user) {
       user = this.repo.create({
         telegramId,
@@ -56,9 +57,6 @@ export class UsersService {
   async createIfNotExists(telegramId: number): Promise<User> {
     return this.getOrCreateByTelegram(telegramId);
   }
-
-  // ========= АВАТАР =========
-
 
   // ========= ЛИДЕРБОРД =========
 

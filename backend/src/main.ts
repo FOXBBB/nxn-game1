@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { startTelegramBot } from './telegram/telegram.bot';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,4 +12,9 @@ async function bootstrap() {
 
   console.log(`🚀 Server started on port ${port}`);
 }
+
 bootstrap();
+await app.listen(3000);
+startTelegramBot();
+
+
