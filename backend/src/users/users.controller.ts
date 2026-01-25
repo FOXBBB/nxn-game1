@@ -6,12 +6,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post("telegram")
-  async getOrCreate(@Body() body: { telegramId?: number }) {
-    if (!body.telegramId) {
-      throw new BadRequestException("telegramId is required");
-    }
-
-    return this.usersService.getOrCreateByTelegram(body.telegramId);
+  async getOrCreate(@Body() body: { telegramId: number }) {
+    return this.usersService.getOrCreateByTelegram(
+      String(body.telegramId),
+    );
   }
+
 
 }
