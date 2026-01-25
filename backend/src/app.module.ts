@@ -25,10 +25,9 @@ import { HealthModule } from './health/health.module';
       url: process.env.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    }),
+      dropSchema: true, // 👈 ВАЖНО
+    })
+    ,
     ShopModule,
     AuthModule,
     PaymentsModule,

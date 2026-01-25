@@ -16,8 +16,10 @@ export class UsersService {
     return this.repo.findOneByOrFail({ id });
   }
 
-  async findByTelegramId(telegramId: number): Promise<User | null> {
-    return this.repo.findOneBy({ telegramId });
+  async findByTelegramId(telegramId: number | string): Promise<User | null> {
+    return this.repo.findOneBy({
+      telegramId: telegramId.toString(),
+    });
   }
 
   async findAll(): Promise<User[]> {
@@ -30,13 +32,16 @@ export class UsersService {
 
   // ========= СОЗДАНИЕ =========
 
- async getOrCreateByTelegram(telegramId: number) {
-  let user = await this.repo.findOne({
-    where: { telegramId },
-  });
+  async getOrCreateByTelegram(telegramId: number | string): Promise<User> {
+    const tgId = telegramId.toString();
+
+    let user = await this.repo.findOne({
+      where: { telegramId: tgId },
+    });
+
     if (!user) {
       user = this.repo.create({
-        telegramId,
+        telegramId: tgId,
         balance: 0,
         balanceNxn: 0,
         tapPower: 1,
@@ -47,14 +52,15 @@ export class UsersService {
         energyBonus: 0,
         autoClicker: false,
       });
+
       await this.repo.save(user);
     }
 
     return user;
   }
 
-  // alias для старого кода (ВАЖНО)
-  async createIfNotExists(telegramId: number): Promise<User> {
+  // alias для старого кода
+  async createIfNotExists(telegramId: number | string): Promise<User> {
     return this.getOrCreateByTelegram(telegramId);
   }
 

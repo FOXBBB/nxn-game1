@@ -5,8 +5,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
-  telegramId!: number;
+  @Column({ type: 'bigint', unique: true })
+  telegramId: string;
+
 
   // валюты
   @Column({ default: 0 })
@@ -52,7 +53,7 @@ export class User {
   @Column({ type: "bigint", default: 0 })
   lastOnline!: number;
 
-   // ✅ ВАЖНО ДЛЯ ОФФЛАЙН ДОХОДА
+  // ✅ ВАЖНО ДЛЯ ОФФЛАЙН ДОХОДА
   @Column({ type: "bigint", default: () => Date.now().toString() })
   lastSeen!: number;
 
