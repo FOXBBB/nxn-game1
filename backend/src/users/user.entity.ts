@@ -6,8 +6,7 @@ export class User {
   id!: number;
 
   @Column({ type: 'bigint', unique: true })
-  telegramId: string;
-
+  telegramId!: number;
 
   // валюты
   @Column({ default: 0 })
