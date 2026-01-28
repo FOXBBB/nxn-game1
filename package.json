@@ -8,5 +8,13 @@
     "install": "cd backend && npm install",
     "build": "cd backend && npm run build",
     "start": "cd backend && npm run start:prod"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3"
   }
 }

@@ -1,12 +1,16 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('telegram')
-  async telegramAuth(@Body('telegramId') telegramId: number) {
-    return this.usersService.getOrCreateByTelegram(telegramId);
+  async telegramAuth(@Body('initData') initData: string) {
+    if (!initData) {
+      throw new UnauthorizedException('No initData');
+    }
+
+    return this.authService.authTelegramWebApp(initData);
   }
 }

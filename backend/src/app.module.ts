@@ -1,40 +1,46 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ScheduleModule } from '@nestjs/schedule';
-import { User } from './users/user.entity';
-import { Payment } from './payments/payment.entity';
-import { TapUpgrade } from './tap/tap-upgrade.entity';
-import { StateModule } from './state/state.module';
+
 import { UsersModule } from './users/users.module';
-import { PaymentsModule } from './payments/payment.module';
-import { TapModule } from './tap/tap.module';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { AuthModule } from './auth/auth.module';
-import { ShopModule } from './shop/shop.module';
-import { HealthController } from './health/health.controller';
+import { TapModule } from './tap/tap.module';
 import { HealthModule } from './health/health.module';
+import { ShopModule } from './shop/shop.module';
+import { PaymentsModule } from './payments/payment.module';
+import { StateModule } from './state/state.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
-  controllers: [HealthController],
   imports: [
-    UsersModule,
-    HealthModule,
-    ScheduleModule.forRoot(),
+    // 🔑 ENV
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
+    // 🌍 WEBAPP (ЭТО ТО, ЧТО ЧИНИТ 404)
+    
+
+    // 🗄️ DATABASE (sqlite локально / postgres в prod)
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
+      type: 'sqlite',
+      database: 'dev.sqlite',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      dropSchema: true, // 👈 ВАЖНО
-    })
-    ,
-    ShopModule,
+      dropSchema: true,
+    }),
+
+    // 📦 MODULES
+    UsersModule,
     AuthModule,
-    PaymentsModule,
     TapModule,
+    HealthModule,
+    ShopModule,
+    PaymentsModule,
     StateModule,
     LeaderboardModule,
   ],
-
 })
 export class AppModule { }
