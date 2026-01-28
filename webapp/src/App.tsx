@@ -1,45 +1,24 @@
 import { useEffect, useState } from 'react'
 
-const API_URL = 'http://localhost:3000' 
-// ⬆️ для Render потом поменяешь на https://nxn-game1.onrender.com
-
-type TgUser = {
-  id: number
-  username?: string
-  first_name?: string
-}
+const API_URL = 'https://nxn-game1.onrender.com'
 
 export default function App() {
-  const [tgUser, setTgUser] = useState<TgUser | null>(null)
+  const [telegramId, setTelegramId] = useState<number | null>(null)
   const [balance, setBalance] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  // 1️⃣ Получаем Telegram WebApp
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp
-
-    if (!tg) {
-      setError('❌ Открой игру через Telegram')
-      setLoading(false)
-      return
-    }
-
-    tg.ready()
-    tg.expand()
-
-    const user = tg.initDataUnsafe?.user
+    const user = tg?.initDataUnsafe?.user
 
     if (!user) {
-      setError('❌ Telegram user не найден')
-      setLoading(false)
+      setError('Открой игру через Telegram')
       return
     }
 
-    setTgUser(user)
+    setTelegramId(user.id)
 
-    // 2️⃣ Логин / регистрация
-    fetch(`${API_URL}/auth/telegram`, {
+    fetch(`${API_URL}/api/auth/telegram`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ telegramId: user.id }),
@@ -47,88 +26,40 @@ export default function App() {
       .then(res => res.json())
       .then(data => {
         setBalance(data.balance)
-        setLoading(false)
       })
-      .catch(() => {
-        setError('❌ Ошибка сервера')
-        setLoading(false)
-      })
+      .catch(() => setError('Ошибка сервера'))
   }, [])
 
-  // 3️⃣ TAP
-  const tap = () => {
-    if (!tgUser) return
+  const tap = async () => {
+    if (!telegramId) return
 
-    fetch(`${API_URL}/tap/${tgUser.id}`, {
+    const res = await fetch(`${API_URL}/api/tap/${telegramId}`, {
       method: 'POST',
     })
-      .then(res => res.json())
-      .then(data => {
-        setBalance(data.balance)
-      })
+    const data = await res.json()
+    setBalance(data.balance)
   }
 
-  // UI состояния
-  if (loading) {
-    return (
-      <Screen>
-        ⏳ Загрузка...
-      </Screen>
-    )
-  }
-
-  if (error) {
-    return (
-      <Screen>
-        {error}
-      </Screen>
-    )
-  }
+  if (error) return <div style={{ padding: 20 }}>{error}</div>
+  if (balance === null) return <div style={{ padding: 20 }}>Загрузка…</div>
 
   return (
-    <Screen>
-      <h2 style={{ marginBottom: 10 }}>🚀 NEXON TAPALKA</h2>
-
-      <div style={{ marginBottom: 20 }}>
-        👤 ID: <b>{tgUser?.id}</b><br />
-        💰 Баланс: <b>{balance}</b>
-      </div>
-
+    <div style={{ padding: 20, textAlign: 'center' }}>
+      <h2>🚀 NEXON TAPALKA</h2>
+      <p>Баланс: <b>{balance}</b></p>
       <button
         onClick={tap}
         style={{
-          width: 140,
-          height: 140,
-          borderRadius: '50%',
-          fontSize: 22,
-          background: '#ffb703',
+          padding: '20px 40px',
+          fontSize: 20,
+          borderRadius: 100,
           border: 'none',
+          background: '#ffd000',
           cursor: 'pointer',
         }}
       >
         TAP
       </button>
-    </Screen>
-  )
-}
-
-// 💄 Обёртка экрана
-function Screen({ children }: { children: any }) {
-  return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#0b0f1a',
-        color: '#ffffff',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'Arial, sans-serif',
-        textAlign: 'center',
-      }}
-    >
-      {children}
     </div>
   )
 }
