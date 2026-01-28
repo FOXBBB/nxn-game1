@@ -30,6 +30,7 @@ export function startTelegramBot() {
     )
   })
 
+  if (process.env.NODE_ENV === 'production') {
   bot.launch()
-  console.log('🤖 Telegram bot started')
-}
+  console.log('🤖 Telegram bot started (production)')
+}}
