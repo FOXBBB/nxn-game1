@@ -1,46 +1,37 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UsersModule } from './users/users.module';
+import { User } from './users/user.entity';
+
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 import { TapModule } from './tap/tap.module';
 import { HealthModule } from './health/health.module';
-import { ShopModule } from './shop/shop.module';
-import { PaymentsModule } from './payments/payment.module';
-import { StateModule } from './state/state.module';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
-    // 🔑 ENV
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-
-    // 🌍 WEBAPP (ЭТО ТО, ЧТО ЧИНИТ 404)
-    
-
-    // 🗄️ DATABASE (sqlite локально / postgres в prod)
+    // 🔹 БАЗА ДАННЫХ (ОБЯЗАТЕЛЬНО ПЕРЕД МОДУЛЯМИ)
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'dev.sqlite',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [User],
       synchronize: true,
-      dropSchema: true,
     }),
 
-    // 📦 MODULES
-    UsersModule,
+    // 🔹 WEBAPP
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'webapp', 'dist'),
+      serveRoot: '/',
+      exclude: ['/api*'],
+    }),
+
+    // 🔹 МОДУЛИ
     AuthModule,
+    UsersModule,
     TapModule,
     HealthModule,
-    ShopModule,
-    PaymentsModule,
-    StateModule,
-    LeaderboardModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
