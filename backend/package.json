@@ -2,8 +2,9 @@
   "name": "nxn-backend",
   "version": "1.0.0",
   "private": true,
+  
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "cd ../webapp && npm install && npm run build && cd ../backend && tsc -p tsconfig.build.json",
     "start": "node dist/main.js"
   },
   "dependencies": {
