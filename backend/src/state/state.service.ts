@@ -19,23 +19,13 @@ export class StateService {
       throw new Error('User not found')
     }
 
-    const now = Date.now()
-    const last = user.lastSeen ?? now
-    const secondsPassed = Math.floor((now - last) / 1000)
-
-    if (secondsPassed >= 3) {
-      const regen = Math.floor(secondsPassed / 3)
-
-      if (regen > 0) {
-        user.energy = Math.min(
-          user.energyMax,
-          user.energy + regen,
-        )
-
-        // 🔴 ВАЖНО: обновляем lastSeen
-        user.lastSeen = now
-        await this.userRepo.save(user)
+    // ✅ ПРОСТАЯ РЕГЕНЕРАЦИЯ
+    if (user.energy < user.energyMax) {
+      user.energy += 1
+      if (user.energy > user.energyMax) {
+        user.energy = user.energyMax
       }
+      await this.userRepo.save(user)
     }
 
     return {
