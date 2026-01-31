@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../users/user.entity'
@@ -7,29 +7,37 @@ import { User } from '../users/user.entity'
 export class TapService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly userRepo: Repository<User>,
   ) {}
 
   async tap(telegramId: string) {
-    const user = await this.usersRepository.findOne({
+    const user = await this.userRepo.findOne({
       where: { telegramId },
     })
 
     if (!user) {
-      throw new Error('User not found')
+      throw new NotFoundException('User not found')
     }
 
-    // если энергия закончилась — ничего не делаем
+    // ⛔ если энергии нет — не даём тапать
     if (user.energy <= 0) {
-      return user
+      return {
+        balance: user.balance,
+        energy: user.energy,
+        energyMax: user.energyMax,
+      }
     }
 
-    // списываем энергию
+    // ✅ логика тапа
+    user.balance += user.tapPower
     user.energy -= 1
 
-    // начисляем баланс
-    user.balance += user.tapPower
+    await this.userRepo.save(user)
 
-    return this.usersRepository.save(user)
+    return {
+      balance: user.balance,
+      energy: user.energy,
+      energyMax: user.energyMax,
+    }
   }
 }
