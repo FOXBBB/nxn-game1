@@ -7,17 +7,12 @@ export default function App() {
   const [balance, setBalance] = useState(0)
   const [energy, setEnergy] = useState(0)
   const [energyMax, setEnergyMax] = useState(0)
-  const [error, setError] = useState<string | null>(null)
 
-  // 📌 получаем telegramId
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp
     const user = tg?.initDataUnsafe?.user
 
-    if (!user) {
-      setError('Открой игру через Telegram')
-      return
-    }
+    if (!user) return
 
     setTelegramId(String(user.id))
 
@@ -30,7 +25,6 @@ export default function App() {
       })
   }, [])
 
-  // 👆 TAP
   const handleTap = async () => {
     if (!telegramId) return
 
@@ -45,10 +39,6 @@ export default function App() {
     setEnergyMax(data.energyMax)
   }
 
-  if (error) {
-    return <div style={{ padding: 20 }}>{error}</div>
-  }
-
   return (
     <div style={{ padding: 20 }}>
       <h2>NEXON TAPALKA</h2>
@@ -59,7 +49,11 @@ export default function App() {
       <button
         onClick={handleTap}
         disabled={energy <= 0}
-        style={{ padding: 20, fontSize: 18 }}
+        style={{
+          padding: 20,
+          fontSize: 18,
+          opacity: energy <= 0 ? 0.5 : 1,
+        }}
       >
         TAP
       </button>

@@ -19,7 +19,7 @@ export class TapService {
       throw new NotFoundException('User not found')
     }
 
-    // ⛔ если энергии нет — не даём тапать
+    // ⛔ нет энергии — нет тапа
     if (user.energy <= 0) {
       return {
         balance: user.balance,
@@ -28,7 +28,7 @@ export class TapService {
       }
     }
 
-    // ✅ логика тапа
+    // ✅ ТАП
     user.balance += user.tapPower
     user.energy -= 1
 
