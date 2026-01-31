@@ -2,20 +2,8 @@
   "name": "nxn-game-root",
   "private": true,
   "scripts": {
-    "build": "cd webapp && npm install && npm run build && cd ../backend && npm install && npm run build",
-    "start": "cd backend && npm run start"
-  },
-  "scripts": {
     "install": "cd backend && npm install",
-    "build": "cd backend && npm run build",
-    "start": "cd backend && npm run start:prod"
-  },
-  "dependencies": {
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.9",
-    "@types/react-dom": "^19.2.3"
+    "build": "cd webapp && npm install && npm run build && cd ../backend && npm run build",
+    "start": "cd backend && npm run start"
   }
 }
