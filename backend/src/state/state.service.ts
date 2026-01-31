@@ -20,19 +20,22 @@ export class StateService {
     }
 
     const now = Date.now()
-    const last = user.lastEnergyUpdate ?? now
+    const last = user.lastSeen ?? now
     const secondsPassed = Math.floor((now - last) / 1000)
 
     if (secondsPassed >= 3) {
       const regen = Math.floor(secondsPassed / 3)
 
-      user.energy = Math.min(
-        user.energyMax, // ⬅️ ВАЖНО
-        user.energy + regen,
-      )
+      if (regen > 0) {
+        user.energy = Math.min(
+          user.energyMax,
+          user.energy + regen,
+        )
 
-      user.lastEnergyUpdate = now
-      await this.userRepo.save(user)
+        // 🔴 ВАЖНО: обновляем lastSeen
+        user.lastSeen = now
+        await this.userRepo.save(user)
+      }
     }
 
     return {
