@@ -7,23 +7,23 @@ export default function App() {
   const [balance, setBalance] = useState(0)
   const [energy, setEnergy] = useState(0)
   const [energyMax, setEnergyMax] = useState(0)
-  const [tapPower, setTapPower] = useState(1)
-  const [error, setError] = useState<string | null>(null)
 
-  // 🔹 Инициализация Telegram
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp
     const user = tg?.initDataUnsafe?.user
 
-    if (!user) {
-      setError('Открой через Telegram')
-      return
-    }
+    if (!user) return
 
     setTelegramId(String(user.id))
+
+    fetch(`${API_URL}/api/auth/telegram`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telegramId: String(user.id) }),
+    })
   }, [])
 
-  // 🔥 ПОЛЛИНГ STATE КАЖДЫЕ 3 СЕКУНДЫ
+  // 🔁 ПОЛЛИНГ ЭНЕРГИИ
   useEffect(() => {
     if (!telegramId) return
 
@@ -34,36 +34,31 @@ export default function App() {
       setBalance(data.balance)
       setEnergy(data.energy)
       setEnergyMax(data.energyMax)
-      setTapPower(data.tapPower)
     }
 
     loadState()
-    const interval = setInterval(loadState, 3000)
+    const timer = setInterval(loadState, 3000)
 
-    return () => clearInterval(interval)
+    return () => clearInterval(timer)
   }, [telegramId])
 
-  // 🔥 TAP
   const tap = async () => {
-    if (!telegramId || energy <= 0) return
+    if (!telegramId) return
 
     const res = await fetch(`${API_URL}/api/tap/${telegramId}`, {
       method: 'POST',
     })
-
     const data = await res.json()
+
     setBalance(data.balance)
     setEnergy(data.energy)
   }
 
-  if (error) return <div>{error}</div>
-
   return (
     <div style={{ padding: 20 }}>
       <h2>NEXON TAPALKA</h2>
-
-      <p>Баланс: <b>{balance}</b></p>
-      <p>Энергия: <b>{energy}</b> / {energyMax}</p>
+      <p>Баланс: {balance}</p>
+      <p>Энергия: {energy} / {energyMax}</p>
 
       <button
         onClick={tap}
