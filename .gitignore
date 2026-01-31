@@ -8,6 +8,8 @@ dist/
 webapp/dist/
 
 # env
+backend/dev.sqlite
+dist
 .env
 
 # db
