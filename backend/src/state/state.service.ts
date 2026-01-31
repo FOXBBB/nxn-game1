@@ -11,25 +11,27 @@ export class StateService {
   ) {}
 
   async getState(telegramId: string) {
-    let user = await this.userRepo.findOne({ where: { telegramId } })
+    const user = await this.userRepo.findOne({
+      where: { telegramId },
+    })
 
     if (!user) {
-      user = this.userRepo.create({
-        telegramId,
-        balance: 0,
-        energy: 100,
-        energyMax: 100,
-        tapPower: 1,
-      })
-      await this.userRepo.save(user)
+      throw new Error('User not found')
     }
 
-    // 🔋 РЕГЕН ЭНЕРГИИ — +1 КАЖДЫЕ 3 СЕК
-    if (user.energy < user.energyMax) {
-      user.energy += 1
-      if (user.energy > user.energyMax) {
-        user.energy = user.energyMax
-      }
+    const now = Date.now()
+    const last = user.lastEnergyUpdate ?? now
+    const secondsPassed = Math.floor((now - last) / 1000)
+
+    if (secondsPassed >= 3) {
+      const regen = Math.floor(secondsPassed / 3)
+
+      user.energy = Math.min(
+        user.energyMax, // ⬅️ ВАЖНО
+        user.energy + regen,
+      )
+
+      user.lastEnergyUpdate = now
       await this.userRepo.save(user)
     }
 
@@ -37,6 +39,7 @@ export class StateService {
       balance: user.balance,
       energy: user.energy,
       energyMax: user.energyMax,
+      tapPower: user.tapPower,
     }
   }
 }

@@ -58,5 +58,10 @@ export class User {
 
   @Column({ default: 0 })
   offlineIncome!: number;
+    // ⬇️ ДОБАВЬ В КОНЕЦ (или рядом с lastSeen)
+  @Column({ type: 'bigint', nullable: true })
+  lastEnergyUpdate!: number | null;
 
+
+ 
 }
