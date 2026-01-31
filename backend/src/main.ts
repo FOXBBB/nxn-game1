@@ -2,6 +2,15 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { startTelegramBot } from './telegram/telegram.bot'
 
+import * as fs from 'fs'
+import { join } from 'path'
+
+console.log(
+  'WEBAPP INDEX EXISTS:',
+  fs.existsSync(join(__dirname, '..', '..', 'webapp', 'dist', 'index.html'))
+)
+
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 

@@ -1,25 +1,35 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { User } from '../users/user.entity'
 
 @Injectable()
 export class TapService {
-  constructor(private readonly users: UsersService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {}
 
-  async tapByTelegramId(telegramId: number) {
-    const user = await this.users.findByTelegramId(telegramId);
+  async tap(telegramId: string) {
+    const user = await this.usersRepository.findOne({
+      where: { telegramId },
+    })
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new Error('User not found')
     }
 
+    // если энергия закончилась — ничего не делаем
     if (user.energy <= 0) {
-      return user;
+      return user
     }
 
-    user.energy -= 1;
-    user.balance += user.tapPower;
-    user.totalTaps += 1;
+    // списываем энергию
+    user.energy -= 1
 
-    return this.users.save(user);
+    // начисляем баланс
+    user.balance += user.tapPower
+
+    return this.usersRepository.save(user)
   }
 }
