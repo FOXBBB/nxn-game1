@@ -16,7 +16,6 @@ export class AuthService {
     })
 
     if (!user) {
-      // 🆕 СОЗДАЁМ НОВОГО
       user = this.userRepo.create({
         telegramId,
         balance: 0,
@@ -25,12 +24,11 @@ export class AuthService {
         tapPower: 1,
       })
     } else {
-      // 🔧 FIX ДЛЯ СТАРЫХ ЮЗЕРОВ
-      if (user.energyMax == null || user.energyMax === 0) {
+      if (!user.energyMax || user.energyMax <= 0) {
         user.energyMax = 100
       }
 
-      if (user.energy == null || user.energy <= 0) {
+      if (user.energy == null || user.energy < 0) {
         user.energy = user.energyMax
       }
 
