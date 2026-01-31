@@ -19,10 +19,12 @@ export default function App() {
     fetch(`${API_URL}/state/${user.id}`)
       .then(res => res.json())
       .then(data => {
-        setBalance(data.balance)
-        setEnergy(data.energy)
-        setEnergyMax(data.energyMax)
-      })
+  console.log('STATE FROM BACKEND', data)
+  setBalance(data.balance)
+  setEnergy(data.energy)
+  setEnergyMax(data.energyMax)
+})
+
   }, [])
 
   const handleTap = async () => {

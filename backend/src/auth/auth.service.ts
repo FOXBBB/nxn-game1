@@ -1,45 +1,50 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import * as crypto from 'crypto';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { User } from '../users/user.entity'
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+  ) {}
 
-  authTelegramWebApp(initData: string) {
-    if (!this.checkTelegramAuth(initData)) {
-      throw new UnauthorizedException('Invalid Telegram signature');
+  async authTelegram(telegramId: string) {
+    let user = await this.userRepo.findOne({
+      where: { telegramId },
+    })
+
+    if (!user) {
+      // 🆕 СОЗДАЁМ НОВОГО
+      user = this.userRepo.create({
+        telegramId,
+        balance: 0,
+        energy: 100,
+        energyMax: 100,
+        tapPower: 1,
+      })
+    } else {
+      // 🔧 FIX ДЛЯ СТАРЫХ ЮЗЕРОВ
+      if (user.energyMax == null || user.energyMax === 0) {
+        user.energyMax = 100
+      }
+
+      if (user.energy == null || user.energy <= 0) {
+        user.energy = user.energyMax
+      }
+
+      if (!user.tapPower) {
+        user.tapPower = 1
+      }
     }
 
-    const params = new URLSearchParams(initData);
-    const user = JSON.parse(params.get('user')!);
+    await this.userRepo.save(user)
 
-    return this.usersService.getOrCreateByTelegram(user.id);
-  }
-
-  private checkTelegramAuth(initData: string): boolean {
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    if (!token) return false;
-
-    const secret = crypto
-      .createHash('sha256')
-      .update(token)
-      .digest();
-
-    const params = new URLSearchParams(initData);
-    const hash = params.get('hash');
-    params.delete('hash');
-
-    const dataCheckString = [...params.entries()]
-      .sort()
-      .map(([k, v]) => `${k}=${v}`)
-      .join('\n');
-
-    const hmac = crypto
-      .createHmac('sha256', secret)
-      .update(dataCheckString)
-      .digest('hex');
-
-    return hmac === hash;
+    return {
+      balance: user.balance,
+      energy: user.energy,
+      energyMax: user.energyMax,
+    }
   }
 }
