@@ -1,37 +1,42 @@
-import { Injectable } from "@nestjs/common";
-import { UsersService } from "../users/users.service";
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { User } from '../users/user.entity'
 
 @Injectable()
 export class StateService {
-  constructor(private users: UsersService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+  ) {}
 
-  async getState(telegramId: number) {
-    const user = await this.users.createIfNotExists(telegramId);
+  async getState(telegramId: string) {
+    let user = await this.userRepo.findOne({ where: { telegramId } })
 
-    const now = Date.now();
-    const offlineSeconds = Math.floor((now - user.lastSeen) / 1000);
-
-    let earned = 0;
-
-    if (offlineSeconds > 5) {
-      const maxSeconds = 6 * 60 * 60; // 6 часов
-      const effectiveSeconds = Math.min(offlineSeconds, maxSeconds);
-
-      earned = Math.floor(effectiveSeconds / 3) * user.tapPower;
-      user.balance += earned;
-      user.offlineIncome = earned;
-    } else {
-      user.offlineIncome = 0;
+    if (!user) {
+      user = this.userRepo.create({
+        telegramId,
+        balance: 0,
+        energy: 100,
+        energyMax: 100,
+        tapPower: 1,
+      })
+      await this.userRepo.save(user)
     }
 
-    user.lastSeen = now;
-    await this.users.save(user);
+    // 🔋 РЕГЕН ЭНЕРГИИ — +1 КАЖДЫЕ 3 СЕК
+    if (user.energy < user.energyMax) {
+      user.energy += 1
+      if (user.energy > user.energyMax) {
+        user.energy = user.energyMax
+      }
+      await this.userRepo.save(user)
+    }
 
     return {
       balance: user.balance,
       energy: user.energy,
-      tapPower: user.tapPower,
-      offlineIncome: earned,
-    };
+      energyMax: user.energyMax,
+    }
   }
 }

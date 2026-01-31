@@ -8,24 +8,32 @@ export default function App() {
   const [energy, setEnergy] = useState(0)
   const [energyMax, setEnergyMax] = useState(0)
 
-  useEffect(() => {
-    const tg = (window as any).Telegram?.WebApp
-    const user = tg?.initDataUnsafe?.user
+useEffect(() => {
+  const tg = (window as any).Telegram?.WebApp
+  const user = tg?.initDataUnsafe?.user
 
-    if (!user) return
+  if (!user) {
+    setError('Открой через Telegram')
+    return
+  }
 
-    setTelegramId(String(user.id))
-
-    fetch(`${API_URL}/state/${user.id}`)
+  const loadState = () => {
+    fetch(`${API_URL}/api/state/${user.id}`)
       .then(res => res.json())
       .then(data => {
-  console.log('STATE FROM BACKEND', data)
-  setBalance(data.balance)
-  setEnergy(data.energy)
-  setEnergyMax(data.energyMax)
-})
+        console.log('STATE', data)
+        setBalance(data.balance)
+        setEnergy(data.energy)
+        setEnergyMax(data.energyMax)
+      })
+  }
 
-  }, [])
+  loadState()
+  const interval = setInterval(loadState, 3000)
+
+  return () => clearInterval(interval)
+}, [])
+
 
   const handleTap = async () => {
     if (!telegramId) return
