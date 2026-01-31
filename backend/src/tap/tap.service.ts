@@ -19,7 +19,6 @@ export class TapService {
       throw new NotFoundException('User not found')
     }
 
-    // ⛔ нет энергии — нет тапа
     if (user.energy <= 0) {
       return {
         balance: user.balance,
@@ -28,9 +27,10 @@ export class TapService {
       }
     }
 
-    // ✅ ТАП
     user.balance += user.tapPower
     user.energy -= 1
+    user.totalTaps += 1
+    user.lastSeen = Date.now()
 
     await this.userRepo.save(user)
 
